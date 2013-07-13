@@ -6,7 +6,8 @@ echo -n "Enter the full path to the svn repository: "
 read svn_repository
 
 echo "|- Creating a temporary directory for the script"
-cd /tmp/svntogit/
+mkdir -p /tmp/svn-to-git/
+cd !$
 rm -rf svn git git_fetched_svn_copy bare.git
 mkdir svn git
 
@@ -33,12 +34,12 @@ git svn fetch
 echo -n "|- Generate .gitignore from trunk ? (y/n): "
 read answer
 case "$answer" in
-[yY]) echo "|-- Generating ..."
-      git svn show-ignore -i trunk > .gitignore
-      echo '------- cat .gitignore'
-      cat .gitignore
-      ;;
-*)    echo "|-- Generation was ignorred";;
+[yY])	echo "|-- Generating ..."
+	git svn show-ignore -i trunk > .gitignore
+	echo '------- cat .gitignore'
+	cat .gitignore
+	;;
+*)	echo "|-- Generation was ignorred";;
 esac
 
 # After that, it is best to make a copy of bulging repository if svn work will continue
@@ -51,31 +52,31 @@ cp -R git git_fetched_svn_copy
 cd git
 
 echo "|- Creating real tags in the git and removing svn tags migrated from git"
-echo "|- создаём реальные теги в git и удаляем мигрированные svn tags из git"
+#echo "|- создаём реальные теги в git и удаляем мигрированные svn tags из git"
 for t in `git branch -r | grep 'tags/' | sed s_tags/__` ; do
-     git tag $t tags/$t^
-     git branch -d -r tags/$t
+	git tag $t tags/$t^
+	git branch -d -r tags/$t
 done
 
 echo "|- Deleting trunk, because we have the master"
-echo "|- Удаляем trunk, т.к. он дублирует автоматически созданный master"
+#echo "|- Удаляем trunk, т.к. он дублирует автоматически созданный master"
 git branch -d -r trunk
 
 echo "|- Deleting svn section svn-remote.svn"
-echo "|- Удаляем секцию с svn (у меня почему-то не удалял)"
+#echo "|- Удаляем секцию с svn (у меня почему-то не удалял)"
 git config --remove-section svn-remote.svn
 
 echo "|- Writing remote.svn.url"
-echo "|- Указываем в конфиге, что удалённый репозиторий тоже самое что и текущий"
+#echo "|- Указываем в конфиге, что удалённый репозиторий тоже самое что и текущий"
 # В статье создаётся как remote.origin.url, но нет смысла это делать
 git config remote.svn.url .
 
 echo "|- Writing remote.svn.fetch"
-echo "|- Прописываем куда смотрит удалённый репозиторий"
+#echo "|- Прописываем куда смотрит удалённый репозиторий"
 git config --add remote.svn.fetch +refs/remotes/*:refs/heads/*
 
 echo "|- Run git fetch svn"
-echo "|- Выкачиваем данные / обновляем данные (git fetch svn)"
+#echo "|- Выкачиваем данные / обновляем данные (git fetch svn)"
 git fetch svn
 
 echo "|- All current branches and tags"
@@ -84,21 +85,33 @@ git branch -a
 echo -n "|- Remove all remote branch? (y/n): "
 read answer
 case "$answer" in
-[yY]) git branch -d -r `git branch -a | grep 'remotes/' | sed 's!remotes/!!'`
-      echo "|-- Was deleted"
-      echo "|-- The remaining branches are:"
-      git branch -a
-      ;;
-*)    echo "|-- Removing was ignorred";;
+[yY])	git branch -d -r `git branch -a | grep 'remotes/' | sed 's!remotes/!!'`
+	echo "|-- Was deleted"
+	echo "|-- The remaining branches are:"
+	git branch -a
+	;;
+*)	echo "|-- Removing was ignorred";;
 esac
 
 echo "|- Creating bare repository (read man git --bare)"
-echo "|- Создаём bare репозиторий (читайте ман по git --bare)"
+#echo "|- Создаём bare репозиторий (читайте ман по git --bare)"
 
 echo "|- This is the repository from which you can then make a clone (git clone bare.git)"
-echo "|- Это репозиторий, с которого потом можно делать клон (git clone bare.git)"
+#echo "|- Это репозиторий, с которого потом можно делать клон (git clone bare.git)"
 cd ..
 git clone --bare git bare.git
+
+echo -n "|- Do you want to push the local master to some remote git repository? (y/n): "
+read answer
+case "$answer" in
+[yY])	echo -n "|-- Enter the full path to remote git repository: "
+	read remote_git_repository
+	cd git
+	git remote add origin $remote_git_repository
+	git push -u origin master
+	;;
+*)	echo "|-- Was ignorred";;
+esac
 
 echo "|- Done!"
 exit 0
