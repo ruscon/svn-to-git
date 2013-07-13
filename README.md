@@ -11,4 +11,4 @@ The script is able to:
 - The script is able to:
 - Generate file authors.txt
 - Generate file .gitignore
-- push data to a remote repository
+- Push data to a custom remote repository
