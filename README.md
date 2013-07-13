@@ -8,7 +8,6 @@ Implemented in the following articles:
 - http://john.albin.net/git/convert-subversion-to-git
 
 The script is able to:
-- The script is able to:
 - Generate file authors.txt
 - Generate file .gitignore
 - Push data to a custom remote repository
