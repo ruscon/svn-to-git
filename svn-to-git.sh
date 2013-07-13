@@ -5,7 +5,7 @@
 echo -n "Enter the full path to the svn repository: "
 read svn_repository
 
-echo "|- Creating a temporary repository for the entire script"
+echo "|- Creating a temporary directory for the script"
 cd /tmp/svntogit/
 rm -rf svn git git_fetched_svn_copy bare.git
 mkdir svn git
