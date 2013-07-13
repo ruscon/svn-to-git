@@ -24,7 +24,6 @@ echo "|- Running git svn init"
 cd git
 git svn init $svn_repository --stdlayout --no-metadata
 cp ../authors.txt ./
-cd ../git
 git config svn.authorsfile authors.txt
 
 echo "|- Fetching svn repository files (git svn fetch)"
@@ -92,6 +91,9 @@ case "$answer" in
 	;;
 *)	echo "|-- Removing was ignorred";;
 esac
+
+echo "|- Deleting remote svn section"
+git remote rm svn
 
 echo "|- Creating bare repository (read man git --bare)"
 #echo "|- Создаём bare репозиторий (читайте ман по git --bare)"
