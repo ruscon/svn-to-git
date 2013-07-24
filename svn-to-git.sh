@@ -7,7 +7,7 @@ read svn_repository
 
 echo "|- Creating a temporary directory for the script"
 mkdir -p /tmp/svn-to-git/
-cd !$
+cd /tmp/svn-to-git/
 rm -rf svn git git_fetched_svn_copy bare.git
 mkdir svn git
 
